@@ -47,9 +47,14 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="TiledSharp, Version=0.15.5889.20321, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TiledSharp.0.15\lib\TiledSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoardGame.cs" />
+    <Compile Include="OpenGL\Board.cs" />
     <Compile Include="OpenGL\Drawer.cs" />
     <Compile Include="OpenGL\TextureLoader.cs" />
     <Compile Include="Program.cs" />
@@ -57,6 +62,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Content\Board1.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\BoardGame.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\teste.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -73,11 +87,18 @@
     <Content Include="Content\path.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\tileset.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoardCGame.Entity\BoardCGame.Entity.csproj">
       <Project>{49f7e24e-a07d-4533-82fe-8bcad6feb344}</Project>
       <Name>BoardCGame.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BoardCGame.Util\BoardCGame.Util.csproj">
+      <Project>{02b1c25d-bf18-4dac-a083-558801a600f5}</Project>
+      <Name>BoardCGame.Util</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

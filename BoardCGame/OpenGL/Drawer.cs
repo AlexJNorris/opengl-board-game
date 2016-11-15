@@ -13,7 +13,7 @@ namespace BoardCGame.OpenGL
 {
     public class Drawer
     {
-        public static void Draw(Texture texture, Vector2 position, Vector2 scale, Color color, Vector2 origin)
+        public static void Draw(Texture texture, Vector2 position, Vector2 scale, Color color, Vector2 origin, Rectangle? sourceRec = null)
         {
             Vector2[] vertices = new Vector2[4]
             {
@@ -29,9 +29,18 @@ namespace BoardCGame.OpenGL
             GL.Color3(color);
             for (int i = 0; i < 4; i++)
             {
-                GL.TexCoord2(vertices[i]);
-                vertices[i].X *= texture.Width;
-                vertices[i].Y *= texture.Height;
+                if (!sourceRec.HasValue)
+                {
+                    GL.TexCoord2(vertices[i]);
+                }
+                else
+                {
+                    //Mantendo entre 0 e 1
+                    GL.TexCoord2((sourceRec.Value.Left + vertices[i].X * sourceRec.Value.Width) / texture.Width,
+                                 (sourceRec.Value.Top + vertices[i].Y * sourceRec.Value.Height) / texture.Height);
+                }
+                vertices[i].X *= (sourceRec == null) ? texture.Width : sourceRec.Value.Width;
+                vertices[i].Y *= (sourceRec == null) ? texture.Height : sourceRec.Value.Height;
                 vertices[i] -= origin;
                 vertices[i] *= scale;
                 vertices[i] += position;

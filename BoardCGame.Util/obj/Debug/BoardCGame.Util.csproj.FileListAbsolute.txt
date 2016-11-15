@@ -1,0 +1,5 @@
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\BoardCGame.Util.dll
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\BoardCGame.Util.pdb
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\obj\Debug\BoardCGame.Util.csprojResolveAssemblyReference.cache
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\obj\Debug\BoardCGame.Util.dll
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\obj\Debug\BoardCGame.Util.pdb

@@ -10,7 +10,7 @@ namespace BoardCGame
     {
         public static void Main(string[] args)
         {
-            using (BoardGame game = new BoardGame(640, 480))
+            using (BoardGame game = new BoardGame(1440, 780))
             {
                 game.Run();
             }

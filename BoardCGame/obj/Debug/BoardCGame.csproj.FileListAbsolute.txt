@@ -12,3 +12,10 @@ c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\D
 c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\lowPolyTree.png
 c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\box.png
 c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\path.png
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\BoardCGame.Util.dll
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\BoardCGame.Util.pdb
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\tileset.png
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\Board1.tmx
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\teste.tmx
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\TiledSharp.dll
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\BoardGame.tmx
