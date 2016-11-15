@@ -1,0 +1,6 @@
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Entity.dll
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Entity.pdb
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\OpenTK.dll
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\OpenTK.xml
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.dll
+c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.pdb
