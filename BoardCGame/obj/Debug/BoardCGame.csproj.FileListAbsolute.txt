@@ -19,3 +19,7 @@ c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\D
 c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\teste.tmx
 c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\TiledSharp.dll
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\BoardGame.tmx
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\player1walkingRight.png
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\player1walkingRight2.png
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\spriteteste.tmx
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\Shockbolt_64x64_01.png

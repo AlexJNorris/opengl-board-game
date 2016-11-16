@@ -8,10 +8,13 @@ namespace BoardCGame.Entity.Enumerations
 {
     public enum BlockType
     {
-        Solid,
+        Terrain,
+        TerrainBoard,
+        Path,
+        //Solid,
         Empty,
-        Platform,
-        Ladder,
-        LadderPlatform
+        //Platform,
+        //Ladder,
+        //LadderPlatform
     }
 }

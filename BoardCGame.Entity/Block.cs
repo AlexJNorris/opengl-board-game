@@ -16,31 +16,30 @@ namespace BoardCGame.Entity
         public bool Platform { get; set; }
         public bool Ladder { get; set; }
 
-
         public Block(BlockType type, int x, int y)
         {
             Type = type;
             X = x;
             Y = y;
 
-            switch (Type)
-            {
-                case BlockType.Ladder:
-                    Ladder = true;
-                    break;
-                case BlockType.LadderPlatform:
-                    Ladder = true;
-                    Platform = true;
-                    break;
-                case BlockType.Solid:
-                    Solid = true;
-                    break;
-                case BlockType.Platform:
-                    Platform = true;
-                    break;
-                default:
-                    break;
-            }
+            //switch (Type)
+            //{
+            //    case BlockType.Ladder:
+            //        Ladder = true;
+            //        break;
+            //    case BlockType.LadderPlatform:
+            //        Ladder = true;
+            //        Platform = true;
+            //        break;
+            //    case BlockType.Solid:
+            //        Solid = true;
+            //        break;
+            //    case BlockType.Platform:
+            //        Platform = true;
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
 
     }

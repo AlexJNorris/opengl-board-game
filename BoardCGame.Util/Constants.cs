@@ -9,6 +9,6 @@ namespace BoardCGame.Util
     public class Constants
     {
         public static int GRIDSIZE = 32;
-        public static int TILESETSIZE = 128;
+        public static int TILESETSIZE = 64;
     }
 }

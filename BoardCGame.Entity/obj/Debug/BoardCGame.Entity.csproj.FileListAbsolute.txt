@@ -5,3 +5,5 @@ c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entit
 c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.csprojResolveAssemblyReference.cache
 c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.dll
 c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.pdb
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Util.dll
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Util.pdb
