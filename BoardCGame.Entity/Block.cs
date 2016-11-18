@@ -13,8 +13,10 @@ namespace BoardCGame.Entity
         public int X { get; set; }
         public int Y { get; set; }
         public bool Solid { get; set; }
-        public bool Platform { get; set; }
-        public bool Ladder { get; set; }
+        //public bool Platform { get; set; }
+        //public bool Ladder { get; set; }
+
+
 
         public Block(BlockType type, int x, int y)
         {

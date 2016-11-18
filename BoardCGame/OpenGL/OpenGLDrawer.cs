@@ -57,7 +57,7 @@ namespace BoardCGame.OpenGL
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             GL.Ortho(-screenWidth / 2f, screenWidth, screenHeight / 2f, -screenHeight / 2f, 0f, 1f);
-            GL.Scale(.8, .5, .8);
+            //GL.Scale(.8, .5, .8);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
         }

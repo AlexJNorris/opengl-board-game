@@ -23,15 +23,13 @@ namespace BoardCGame
         private Board _board;
         private Player _player;
 
-        private int rotx = 0, roty = 0;
-        private int rot = 0;
+
+        private int cont = 0;
 
         public BoardGame(int width, int height)
             : base(width, height, GraphicsMode.Default, "Board CG Game", GameWindowFlags.Default, DisplayDevice.Default, 2, 1, GraphicsContextFlags.Debug)
         {
             GL.Enable(EnableCap.Texture2D);
-
-            
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
@@ -47,28 +45,28 @@ namespace BoardCGame
             GL.Light(LightName.Light0, LightParameter.Position, new Vector4(-40, 200, 100, 0.0f));
             GL.Light(LightName.Light0, LightParameter.Ambient, new Vector4(0.2f, 0.2f, 0.2f, 1.0f));
             GL.Light(LightName.Light0, LightParameter.Diffuse, new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
-
             GL.Enable(EnableCap.Light0);
             GL.Enable(EnableCap.Lighting);
+
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.ColorMaterial);
-            GL.Enable(EnableCap.DepthTest);
-
             GL.ShadeModel(ShadingModel.Smooth);
             GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
 
-
             _texture = TextureLoader.LoadTexture("path.png");
             _tileSet = TextureLoader.LoadTexture("Shockbolt_64x64_01.png");
-            _board = new OpenGL.Board("Content/spriteteste.tmx");
-            //_player = new BoardCGame.Player(new Vector2(
-            //    (_board.PlayerStartPos.X + 0.5f) * Constants.GRIDSIZE,
-            //    (_board.PlayerStartPos.Y + 0.5f) *Constants.GRIDSIZE));
+            _board = new OpenGL.Board("Content/spritetestev3.tmx");
+            _player = new BoardCGame.Player(new Vector2(
+                (_board.PlayerStartPos.X + 0.5f) * Constants.GRIDSIZE,
+                (_board.PlayerStartPos.Y + 0.5f) * Constants.GRIDSIZE));
 
             MouseMove += BoardGame_MouseMove;
             MouseWheel += BoardGame_MouseWheel;
 
-            Initialize();
+            //Initialize();
+
+            _player.Position = new Vector2(_board.PlayerStartPos.X / Constants.TILESETSIZE,
+                                           _board.PlayerStartPos.Y / Constants.TILESETSIZE);
         }
 
         private void Initialize()
@@ -97,18 +95,16 @@ namespace BoardCGame
 
         private void BoardGame_MouseMove(object sender, OpenTK.Input.MouseMoveEventArgs e)
         {
-            rotx += e.XDelta;
-            roty += e.YDelta;
+            //rotx += e.XDelta;
+            //roty += e.YDelta;
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-            GL.ClearColor(Color.White);
-
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
+            GL.ClearColor(Color.White);
+    
             //GL.MatrixMode(MatrixMode.Projection);
             //GL.LoadIdentity();
             //GL.Ortho(0, this.Width, this.Height, 0, -1, 4);
@@ -117,7 +113,9 @@ namespace BoardCGame
             //GL.LoadIdentity();
 
             Draw();
-            //view.Camera.AddRotation(rotx, roty);
+            _player.Draw();
+            //view.Camera.AddRotation(rotx, roty);           
+
             this.SwapBuffers();
         }
 
@@ -135,9 +133,9 @@ namespace BoardCGame
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            //_player.Update();
+            _player.Update();
             //view.SetPosition(_player.Position, TweenType.QuarticOut, 60);
-
+     
             //v.ViewProjectionMatrix = cam.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, ClientSize.Width / (float)ClientSize.Height, 1.0f, 40.0f);
 
             if (Input.MousePress(OpenTK.Input.MouseButton.Left))
@@ -150,10 +148,14 @@ namespace BoardCGame
             if (Input.KeyDown(OpenTK.Input.Key.Right))
             {
                 view.SetPosition(view.PositionGoto + new Vector2(-5, 0), TweenType.QuarticOut, 15);
+                _player.Position = _board.Paths.ElementAt(cont) != null ? new Vector2(_board.Paths.ElementAt(cont).X,
+                                                                                 _board.Paths.ElementAt(cont).Y)
+                                                                                 : _board.TestePos;
+                cont++;
+                _player.Update();
             }
             if (Input.KeyDown(OpenTK.Input.Key.Left))
             {
-                //view.Rotation = rot++;
                 view.SetPosition(view.PositionGoto + new Vector2(5, 0), TweenType.QuarticOut, 15);
             }
 
@@ -180,7 +182,6 @@ namespace BoardCGame
             //Matrix4 modelViewProjection = calculatedMatrix * projectionMatrix;
             GL.MultMatrix(ref calculatedMatrix);
 
-            //_player.Draw();
             for (int x = 0; x < _board.Width; x++)
             {
                 for (int y = 0; y < _board.Height; y++)
@@ -201,6 +202,14 @@ namespace BoardCGame
                             source = new RectangleF(110 * Constants.TILESETSIZE, 27 * Constants.TILESETSIZE,
                                    Constants.TILESETSIZE, Constants.TILESETSIZE);
                             break;
+                        case BlockType.Teste:
+                            source = new RectangleF(3 * Constants.TILESETSIZE, 23 * Constants.TILESETSIZE,
+                                   Constants.TILESETSIZE, Constants.TILESETSIZE);
+                            break;
+                        case BlockType.StartPoint:
+                            source = new RectangleF(74 * Constants.TILESETSIZE, 27 * Constants.TILESETSIZE,
+                                  Constants.TILESETSIZE, Constants.TILESETSIZE);
+                            break;
 
                         //case BlockType.LadderPlatform:
                         //    source = new RectangleF(3 * Constants.TILESETSIZE, 0 * Constants.TILESETSIZE,
@@ -217,12 +226,31 @@ namespace BoardCGame
                             break;
                     }
 
-                    OpenGLDrawer.Draw(_tileSet, new Vector2(x * Constants.GRIDSIZE, y * Constants.GRIDSIZE),
+                    OpenGLDrawer.Draw(_tileSet, 
+                        new Vector2(x * Constants.GRIDSIZE, y * Constants.GRIDSIZE),
                         new Vector2((float)Constants.GRIDSIZE / Constants.TILESETSIZE),
-                        Color.White, Vector2.Zero, source);
+                        Color.Transparent, 
+                        Vector2.Zero, 
+                        source);
                 }
             }
- 
+
+     
+
+
+
+
+            //RectangleF playerSource = new RectangleF(0, 0, 0, 0);
+
+            //// COORDS IMAGEM CORTADA
+            //playerSource = new RectangleF(1 * Constants.TILESETSIZE, 3 * Constants.TILESETSIZE,
+            //                      Constants.TILESETSIZE, Constants.TILESETSIZE);
+
+
+            //OpenGLDrawer.Draw(_tileSet, new Vector2(3 * Constants.GRIDSIZE, 35 * Constants.GRIDSIZE),
+            //           new Vector2((float)Constants.GRIDSIZE / Constants.TILESETSIZE),
+            //           Color.Transparent, Vector2.Zero, playerSource);
+
 
         }
     }

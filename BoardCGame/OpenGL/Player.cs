@@ -10,6 +10,7 @@ using BoardCGame.Entity;
 using BoardCGame.Entity.Enumerations;
 using OpenTK.Input;
 using BoardCGame.OpenGL;
+using BoardCGame.Util;
 
 
 namespace BoardCGame
@@ -48,7 +49,7 @@ namespace BoardCGame
             Position = startPos;
             Velocity = Vector2.Zero;
             _facingRight = true;
-            Size = new Vector2(40, 40);
+            Size = new Vector2(40, 32);
             _playerSprite = TextureLoader.LoadTexture("player1walkingRight2.png");
         }
 
@@ -73,9 +74,11 @@ namespace BoardCGame
 
         public void Draw()
         {
-            OpenGLDrawer.Draw(_playerSprite, Position,
-                new Vector2(DrawRec.Width/_playerSprite.Width, DrawRec.Height/_playerSprite.Height), Color.White,
-                new Vector2(_playerSprite.Width/4f, _playerSprite.Height/2f),
+            OpenGLDrawer.Draw(_playerSprite,
+                new Vector2(Position.X*Constants.GRIDSIZE, Position.Y*Constants.GRIDSIZE),
+                new Vector2(DrawRec.Width/_playerSprite.Width, DrawRec.Height/_playerSprite.Height),
+                Color.Transparent,
+                Vector2.Zero,//new Vector2(_playerSprite.Width/4f, _playerSprite.Height/2f),
                 new RectangleF(0, 0,_playerSprite.Width, _playerSprite.Height));
         }
     }

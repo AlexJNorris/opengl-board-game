@@ -13,6 +13,7 @@ using System.IO;
 using BoardCGame.Entity.Enumerations;
 using System.Xml;
 using TiledSharp;
+using BoardCGame.Util;
 
 namespace BoardCGame.OpenGL
 {
@@ -20,7 +21,17 @@ namespace BoardCGame.OpenGL
     {
         private Block[,] _grid;
         private string _fileName;
-        public Point PlayerStartPos { get; set; }
+        private Point _playerStartPos, _playerEndPos;
+
+        public Point PlayerStartPos
+        {
+            get { return _playerStartPos; }
+        }
+
+        public Point PlayerEndPos
+        {
+            get { return _playerEndPos; }
+        }
 
         public Block this[int x, int y]
         {
@@ -43,118 +54,32 @@ namespace BoardCGame.OpenGL
             get { return _grid.GetLength(1); }
         }
 
+        public Vector2 TestePos { get; set; }
+
+        private IList<Block> _paths;
+        private IList<Block> _boardPaths;
+
+        public IList<Block> Paths
+        {
+            get { return _paths; }
+        }
+
+
         public Board(string filePath)
         {
             try
             {
                 TmxMap map = new TmxMap(filePath);
-
-                int width = map.Width;
-                int height = map.Height;
-
-                _grid = new Block[width, height];
+                _grid = new Block[map.Width, map.Height];
                 _fileName = filePath;
-                PlayerStartPos = new Point(1, 1);
 
-                //XmlNode tileLayer = document.DocumentElement.SelectSingleNode("layer[@name='Tile Layer 1']");
-                //XmlNodeList tiles = tileLayer.SelectSingleNode("data").SelectNodes("tile");
-
-                TmxLayer tileLayer2 = map.Layers.FirstOrDefault();
-                if (tileLayer2 == null)
-                {
-                    return;
-                }
-
-                IList<TmxLayerTile> tiles2 = tileLayer2.Tiles;
-
-                int x = 0;
-                int y = 0;
-                for (int i = 0; i < tiles2.Count; i++)
-                {
-                    int gid = tiles2[i].Gid;
-                    switch (gid)
-                    {
-                        case 2952:
-                            _grid[x, y] = new Block(BlockType.Terrain, x, y);
-                            break;
-                        case 2817:
-                            _grid[x, y] = new Block(BlockType.TerrainBoard, x, y);
-                            break;
-                        case 3567:
-                            _grid[x, y] = new Block(BlockType.Path, x, y);
-                            break;
-
-                        //case 3:
-                        //    _grid[x, y] = new Block(BlockType.Ladder, x, y);
-                        //    break;
-                        //case 4:
-                        //    _grid[x, y] = new Block(BlockType.LadderPlatform, x, y);
-                        //    break;
-                        //case 5:
-                        //    _grid[x, y] = new Block(BlockType.Platform, x, y);
-                        //    break;
-                        default:
-                            _grid[x, y] = new Block(BlockType.Empty, x, y);
-                            break;
-                    }
-
-                    x++;
-                    if (x >= width)
-                    {
-                        x = 0;
-                        y++;
-                    }
-                }
-
-                var objectGroup = map.ObjectGroups.FirstOrDefault(t => t.Name.Contains("Player1"));
-                if (objectGroup != null)
-                {
-                    var objects = objectGroup.Objects;
-
-                    for (int i = 0; i < objects.Count; i++)
-                    {
-                        double xPos = objects[i].X;
-                        double yPos = objects[i].Y;
-
-                        switch (objects[i].Name)
-                        {
-                            case "PlayerStartPos":
-                                //Sabendo a posicao do jogador
-                                this.PlayerStartPos = new Point((int)(xPos / 128), (int)(yPos / 128));
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-
-
-
-
+                BuildBoard(map);
+                BuildObjects(map);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                int width = 20, height = 20;
-                _grid = new Block[width, height];
-                _fileName = "none";
-                PlayerStartPos = new Point(1, 1);
-
-                for (int x = 0; x < Width; x++)
-                {
-                    for (int y = 0; y < Height; y++)
-                    {
-                        // Evitando pintar o meio
-                        if (x == 0 || y == 0 || x == Width - 1 || y == Height - 1)
-                        {
-                            _grid[x, y] = new Block(BlockType.Terrain, x, y);
-                        }
-                        else
-                        {
-                            _grid[x, y] = new Block(BlockType.Empty, x, y);
-                        }
-                    }
-                }
+                DrawBaseCase();
             }
         }
 
@@ -162,7 +87,130 @@ namespace BoardCGame.OpenGL
         {
             _grid = new Block[width, height];
             _fileName = "none";
-            PlayerStartPos = new Point(1, 1);
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    // Evitando pintar o meio
+                    if (x == 0 || y == 0 || x == Width - 1 || y == Height - 1)
+                    {
+                        _grid[x, y] = new Block(BlockType.Terrain, x, y);
+                    }
+                    else
+                    {
+                        _grid[x, y] = new Block(BlockType.Empty, x, y);
+                    }
+                }
+            }
+        }
+
+        #region Private Methods
+
+        private void MapStartPositions(IList<TmxObjectGroup> objectGroup)
+        {
+            TmxObject playerStartPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerStart");
+            TmxObject playerEndPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerEnd");
+            if (playerStartPos == null || playerEndPos == null)
+            {
+                throw new Exception("Coordenadas de inicio e fim não encontradas");
+            }
+
+
+            _playerStartPos = new Point((int)playerStartPos.X, (int)playerStartPos.Y);
+            _playerEndPos = new Point((int)playerEndPos.X, (int)playerEndPos.Y);
+        }
+
+        private void MapBoardPath(IList<TmxObjectGroup> objectGroup)
+        {
+            int tValue;
+            _paths = new List<Block>();
+            IList<TmxObject> objects =
+                objectGroup.Where(t => t.Name.Contains("Path")).SelectMany(z => z.Objects).ToList();
+            objects = objects.Where(t => int.TryParse(t.Name, out tValue)).OrderBy(z => int.Parse(z.Name)).ToList();
+            foreach (var obj in objects)
+            {
+                var xPos = (int)obj.X / Constants.TILESETSIZE;
+                var yPos = (int)obj.Y / Constants.TILESETSIZE;
+                _paths.Add(new Block(BlockType.Path, xPos, yPos));
+            }
+        }
+
+
+        private void BuildBoard(TmxMap map)
+        {
+            TmxLayer tileLayer = map.Layers.FirstOrDefault();
+            if (tileLayer == null)
+            {
+                throw new Exception("Mapa não encontrado.");
+            }
+
+
+            IList<TmxLayerTile> tiles2 = tileLayer.Tiles;
+            _boardPaths = new List<Block>();
+
+            int x = 0;
+            int y = 0;
+            for (int i = 0; i < tiles2.Count; i++)
+            {
+                int gid = tiles2[i].Gid;
+                switch (gid)
+                {
+                    case 2952:
+                        _grid[x, y] = new Block(BlockType.Terrain, x, y);
+                        break;
+                    case 2817:
+                        _grid[x, y] = new Block(BlockType.TerrainBoard, x, y);
+                        break;
+                    case 3567:
+                        _grid[x, y] = new Block(BlockType.Path, x, y);
+                        _boardPaths.Add(new Block(BlockType.Path, x, y));
+                        break;
+                    case 3569:
+                        _grid[x, y] = new Block(BlockType.StartPoint, x, y);
+                        break;
+                    case 2948:
+                        _grid[x, y] = new Block(BlockType.Teste, x, y);
+                        TestePos = new Vector2(x, y);
+                        break;
+
+                    //case 3:
+                    //    _grid[x, y] = new Block(BlockType.Ladder, x, y);
+                    //    break;
+                    //case 4:
+                    //    _grid[x, y] = new Block(BlockType.LadderPlatform, x, y);
+                    //    break;
+                    //case 5:
+                    //    _grid[x, y] = new Block(BlockType.Platform, x, y);
+                    //    break;
+                    default:
+                        _grid[x, y] = new Block(BlockType.Empty, x, y);
+                        break;
+                }
+
+                x++;
+                if (x >= map.Width)
+                {
+                    x = 0;
+                    y++;
+                }
+            }
+        }
+
+        private void BuildObjects(TmxMap map)
+        {
+            IList<TmxObjectGroup> objectGroup = map.ObjectGroups.ToList();
+            if (objectGroup.Any())
+            {
+                MapStartPositions(objectGroup);
+                MapBoardPath(objectGroup);
+            }
+        }
+
+        private void DrawBaseCase()
+        {
+            int width = 20, height = 20;
+            _grid = new Block[width, height];
+            _fileName = "none";
 
             for (int x = 0; x < Width; x++)
             {
@@ -180,5 +228,7 @@ namespace BoardCGame.OpenGL
                 }
             }
         }
+
+        #endregion
     }
 }
