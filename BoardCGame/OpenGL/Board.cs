@@ -108,16 +108,16 @@ namespace BoardCGame.OpenGL
 
         private void MapStartPositions(IList<TmxObjectGroup> objectGroup)
         {
-            TmxObject playerStartPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerStart");
-            TmxObject playerEndPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerEnd");
-            if (playerStartPos == null || playerEndPos == null)
-            {
-                throw new Exception("Coordenadas de inicio e fim não encontradas");
-            }
+            //TmxObject playerStartPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerStart");
+            //TmxObject playerEndPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerEnd");
+            //if (playerStartPos == null || playerEndPos == null)
+            //{
+            //    throw new Exception("Coordenadas de inicio e fim não encontradas");
+            //}
 
 
-            _playerStartPos = new Point((int)playerStartPos.X, (int)playerStartPos.Y);
-            _playerEndPos = new Point((int)playerEndPos.X, (int)playerEndPos.Y);
+            //_playerStartPos = new Point((int)playerStartPos.X, (int)playerStartPos.Y);
+            //_playerEndPos = new Point((int)playerEndPos.X, (int)playerEndPos.Y);
         }
 
         private void MapBoardPath(IList<TmxObjectGroup> objectGroup)
@@ -158,19 +158,18 @@ namespace BoardCGame.OpenGL
                     case 2952:
                         _grid[x, y] = new Block(BlockType.Terrain, x, y);
                         break;
-                    case 2817:
+                    //case 2817:
+                    case 2258:
                         _grid[x, y] = new Block(BlockType.TerrainBoard, x, y);
                         break;
-                    case 3567:
+                    //case 3567:
+                    case 1443:
                         _grid[x, y] = new Block(BlockType.Path, x, y);
                         _boardPaths.Add(new Block(BlockType.Path, x, y));
                         break;
-                    case 3569:
+                    //case 3569:
+                    case 1829:
                         _grid[x, y] = new Block(BlockType.StartPoint, x, y);
-                        break;
-                    case 2948:
-                        _grid[x, y] = new Block(BlockType.Teste, x, y);
-                        TestePos = new Vector2(x, y);
                         break;
 
                     //case 3:

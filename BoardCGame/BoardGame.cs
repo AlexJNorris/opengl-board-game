@@ -54,8 +54,8 @@ namespace BoardCGame
             GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
 
             _texture = TextureLoader.LoadTexture("path.png");
-            _tileSet = TextureLoader.LoadTexture("Shockbolt_64x64_01.png");
-            _board = new OpenGL.Board("Content/spritetestev3.tmx");
+            _tileSet = TextureLoader.LoadTexture("ICONS_COMPLETE_1024x9.png");
+            _board = new OpenGL.Board("Content/MapaJogo.tmx");
             _player = new BoardCGame.Player(new Vector2(
                 (_board.PlayerStartPos.X + 0.5f) * Constants.GRIDSIZE,
                 (_board.PlayerStartPos.Y + 0.5f) * Constants.GRIDSIZE));
@@ -147,26 +147,26 @@ namespace BoardCGame
 
             if (Input.KeyDown(OpenTK.Input.Key.Right))
             {
-                view.SetPosition(view.PositionGoto + new Vector2(-5, 0), TweenType.QuarticOut, 15);
-                _player.Position = _board.Paths.ElementAt(cont) != null ? new Vector2(_board.Paths.ElementAt(cont).X,
-                                                                                 _board.Paths.ElementAt(cont).Y)
-                                                                                 : _board.TestePos;
-                cont++;
-                _player.Update();
+                view.SetPosition(view.PositionGoto + new Vector2(-5, 0), TweenType.QuarticOut, 60);
+                //_player.Position = _board.Paths.ElementAt(cont) != null ? new Vector2(_board.Paths.ElementAt(cont).X,
+                //                                                                 _board.Paths.ElementAt(cont).Y)
+                //                                                                 : _board.TestePos;
+                //cont++;
+                //_player.Update();
             }
             if (Input.KeyDown(OpenTK.Input.Key.Left))
             {
-                view.SetPosition(view.PositionGoto + new Vector2(5, 0), TweenType.QuarticOut, 15);
+                view.SetPosition(view.PositionGoto + new Vector2(5, 0), TweenType.QuarticOut, 60);
             }
 
             if (Input.KeyDown(OpenTK.Input.Key.Up))
             {
-                view.SetPosition(view.PositionGoto + new Vector2(0, 5), TweenType.QuarticOut, 15);
+                view.SetPosition(view.PositionGoto + new Vector2(0, 5), TweenType.QuarticOut, 60);
             }
 
             if (Input.KeyDown(OpenTK.Input.Key.Down))
             {
-                view.SetPosition(view.PositionGoto + new Vector2(0, -5), TweenType.QuarticOut, 15);
+                view.SetPosition(view.PositionGoto + new Vector2(0, -5), TweenType.QuarticOut, 60);
             }
 
             view.Update();
@@ -190,24 +190,16 @@ namespace BoardCGame
 
                     switch (_board[x, y].Type)
                     {
-                        case BlockType.Terrain:
-                            source = new RectangleF(7 * Constants.TILESETSIZE, 23 * Constants.TILESETSIZE,
-                                   Constants.TILESETSIZE, Constants.TILESETSIZE);
-                            break;
                         case BlockType.TerrainBoard:
-                            source = new RectangleF(0 * Constants.TILESETSIZE, 22 * Constants.TILESETSIZE,
+                            source = new RectangleF(1 * Constants.TILESETSIZE, 47 * Constants.TILESETSIZE,
                                    Constants.TILESETSIZE, Constants.TILESETSIZE);
                             break;
                         case BlockType.Path:
-                            source = new RectangleF(110 * Constants.TILESETSIZE, 27 * Constants.TILESETSIZE,
-                                   Constants.TILESETSIZE, Constants.TILESETSIZE);
-                            break;
-                        case BlockType.Teste:
-                            source = new RectangleF(3 * Constants.TILESETSIZE, 23 * Constants.TILESETSIZE,
+                            source = new RectangleF(2 * Constants.TILESETSIZE, 30 * Constants.TILESETSIZE,
                                    Constants.TILESETSIZE, Constants.TILESETSIZE);
                             break;
                         case BlockType.StartPoint:
-                            source = new RectangleF(74 * Constants.TILESETSIZE, 27 * Constants.TILESETSIZE,
+                            source = new RectangleF(4 * Constants.TILESETSIZE, 38 * Constants.TILESETSIZE,
                                   Constants.TILESETSIZE, Constants.TILESETSIZE);
                             break;
 

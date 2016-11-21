@@ -25,3 +25,5 @@ C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\D
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\Shockbolt_64x64_01.png
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\spritetestev2.tmx
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\spritetestev3.tmx
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\ICONS_COMPLETE_1024x9.png
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\MapaJogo.tmx
