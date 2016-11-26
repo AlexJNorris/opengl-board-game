@@ -39,7 +39,8 @@ namespace BoardCGame.OpenGL
                     GL.TexCoord2((sourceRec.Value.Left + vertices[i].X * sourceRec.Value.Width) / texture.Width,
                                  (sourceRec.Value.Top + vertices[i].Y * sourceRec.Value.Height) / texture.Height);
                 }
-                vertices[i].X *= (sourceRec == null) ? texture.Width : sourceRec.Value.Width;
+
+                vertices[i].X *= sourceRec?.Width ?? texture.Width;
                 vertices[i].Y *= (sourceRec == null) ? texture.Height : sourceRec.Value.Height;
                 vertices[i] -= origin;
                 vertices[i] *= scale;

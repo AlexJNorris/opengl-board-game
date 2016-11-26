@@ -55,7 +55,7 @@ namespace BoardCGame.OpenGL
             return (this.Position + dx*input.X + dy*input.Y);
         }
 
-        public View(Vector2 startPosition, double startZoom = 1.0, double startRotation = 0.0)
+        public View(Vector2 startPosition, double startZoom = 0.03f, double startRotation = 0.0)
         {
             _position = startPosition;
             Zoom = startZoom;
@@ -119,8 +119,15 @@ namespace BoardCGame.OpenGL
             Matrix4 transform = Matrix4.Identity;
             transform = Matrix4.Mult(transform, Matrix4.CreateTranslation(-Position.X, -Position.Y, 0));
             transform = Matrix4.Mult(transform, Matrix4.CreateRotationZ(-(float)Rotation));
-            transform = Matrix4.Mult(transform, Matrix4.CreateScale((float) Zoom, (float) Zoom, 1.0f));
+            transform = Matrix4.Mult(transform, Matrix4.CreateScale((float) Zoom, (float) Zoom, .5f));
             return transform;
+        }
+
+        public void ResetPosition()
+        {
+            _position.X = 405;
+            _position.Y = -90;
+            _positionGoto = Position;
         }
 
 

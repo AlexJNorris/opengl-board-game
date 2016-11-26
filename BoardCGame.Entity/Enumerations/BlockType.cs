@@ -12,7 +12,7 @@ namespace BoardCGame.Entity.Enumerations
         TerrainBoard,
         Path,
         StartPoint,
-        Teste,
+        EndPoint,
         //Solid,
         Empty,
         //Platform,

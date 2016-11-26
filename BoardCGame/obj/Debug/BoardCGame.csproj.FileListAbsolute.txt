@@ -27,3 +27,16 @@ C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\D
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\spritetestev3.tmx
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\ICONS_COMPLETE_1024x9.png
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\MapaJogo.tmx
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\dice_texture.png
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\1.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\2.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\3.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\4.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\5.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\6.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\1.2.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\2.2.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\3.2.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\4.2.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\5.2.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\6.2.PNG

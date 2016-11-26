@@ -75,7 +75,7 @@ namespace BoardCGame
         public void Draw()
         {
             OpenGLDrawer.Draw(_playerSprite,
-                new Vector2(Position.X*Constants.GRIDSIZE, Position.Y*Constants.GRIDSIZE),
+                new Vector2(Position.X*Constants.GRIDSIZE, -Position.Y*Constants.GRIDSIZE),
                 new Vector2(DrawRec.Width/_playerSprite.Width, DrawRec.Height/_playerSprite.Height),
                 Color.Transparent,
                 Vector2.Zero,//new Vector2(_playerSprite.Width/4f, _playerSprite.Height/2f),

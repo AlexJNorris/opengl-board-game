@@ -64,7 +64,6 @@ namespace BoardCGame.OpenGL
             get { return _paths; }
         }
 
-
         public Board(string filePath)
         {
             try
@@ -108,16 +107,16 @@ namespace BoardCGame.OpenGL
 
         private void MapStartPositions(IList<TmxObjectGroup> objectGroup)
         {
-            //TmxObject playerStartPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerStart");
-            //TmxObject playerEndPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerEnd");
-            //if (playerStartPos == null || playerEndPos == null)
-            //{
-            //    throw new Exception("Coordenadas de inicio e fim não encontradas");
-            //}
+            TmxObject playerStartPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerStart");
+            TmxObject playerEndPos = objectGroup.SelectMany(z => z.Objects).FirstOrDefault(t => t.Name == "PlayerEnd");
+            if (playerStartPos == null || playerEndPos == null)
+            {
+                throw new Exception("Coordenadas de inicio e fim não encontradas");
+            }
 
 
-            //_playerStartPos = new Point((int)playerStartPos.X, (int)playerStartPos.Y);
-            //_playerEndPos = new Point((int)playerEndPos.X, (int)playerEndPos.Y);
+            _playerStartPos = new Point((int)playerStartPos.X, (int)playerStartPos.Y);
+            _playerEndPos = new Point((int)playerEndPos.X, (int)playerEndPos.Y);
         }
 
         private void MapBoardPath(IList<TmxObjectGroup> objectGroup)
@@ -134,7 +133,6 @@ namespace BoardCGame.OpenGL
                 _paths.Add(new Block(BlockType.Path, xPos, yPos));
             }
         }
-
 
         private void BuildBoard(TmxMap map)
         {
@@ -170,6 +168,9 @@ namespace BoardCGame.OpenGL
                     //case 3569:
                     case 1829:
                         _grid[x, y] = new Block(BlockType.StartPoint, x, y);
+                        break;
+                    case 246:
+                        _grid[x, y] = new Block(BlockType.EndPoint, x, y);
                         break;
 
                     //case 3:
