@@ -179,21 +179,21 @@ namespace BoardCGame
                 }
             }
 
-            if (Input.KeyDown(OpenTK.Input.Key.Right))
+            if (Input.KeyDown(OpenTK.Input.Key.Right) || Input.KeyDown(OpenTK.Input.Key.A))
             {
                 _view.SetPosition(_view.PositionGoto + new Vector3(10, 0, 0), EnumAnimationType.QuarticOut, 30);
             }
-            if (Input.KeyDown(OpenTK.Input.Key.Left))
+            if (Input.KeyDown(OpenTK.Input.Key.Left) || Input.KeyDown(OpenTK.Input.Key.D))
             {
                 _view.SetPosition(_view.PositionGoto + new Vector3(-10, 0, 0), EnumAnimationType.QuarticOut, 30);
             }
 
-            if (Input.KeyDown(OpenTK.Input.Key.Down))
+            if (Input.KeyDown(OpenTK.Input.Key.Down) || Input.KeyDown(OpenTK.Input.Key.S))
             {
                 _view.SetPosition(_view.PositionGoto + new Vector3(0, 10, 0), EnumAnimationType.QuarticOut, 30);
             }
 
-            if (Input.KeyDown(OpenTK.Input.Key.Up))
+            if (Input.KeyDown(OpenTK.Input.Key.Up) || Input.KeyDown(OpenTK.Input.Key.W))
             {
                 _view.SetPosition(_view.PositionGoto + new Vector3(0, -10, 0), EnumAnimationType.QuarticOut, 30);
             }
