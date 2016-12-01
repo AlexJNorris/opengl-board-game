@@ -64,7 +64,7 @@ namespace BoardCGame.Entity
 
         public static bool KeyPress(Key key)
         {
-            //Pressionada no frame atual mas não no anterior
+            //Pressionada no frame atual e não no anterior
             return (_keysDown.Contains(key) && !_keysDownLast.Contains(key));
         }
 

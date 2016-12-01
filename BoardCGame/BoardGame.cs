@@ -11,42 +11,69 @@ using BoardCGame.Entity.Enumerations;
 using BoardCGame.OpenGL;
 using BoardCGame.Util;
 using OpenTK.Graphics;
+using OpenTK.Input;
+using BoardCGame.Config;
 using RectangleF = System.Drawing.Rectangle;
-using Projeto_CG_1_GQ.Configuration;
 
 namespace BoardCGame
 {
     public class BoardGame : GameWindow
     {
-        private View view;
-        private Texture _cubeTexture, _tileSet, _teste;
+        private View _view;
+        private Texture _tileSet, _backgroundTexture;
         private Board _board;
-        private Player _player;
+        private Player _player1, _player2;
         private Dice _dice;
-        private int currentDiceFaceId;
+        private int _currentDiceFaceId;
         private System.Diagnostics.Stopwatch _watch;
         private float _angle;
-
-        //
-
-        private IInputHandler inputHandler = new InputHandler();
-        float rx = 0;
-        float ry = 0;
-        bool rotate = false;
-        //
-
+        private Point _mousePos;
+        private Camera _camera;
+        private Audio _audio;
+        private EnumPlayer _currentPlayer;
+        bool _diceRotate;
+        bool _boardRotate;
+        
         public BoardGame(int width, int height)
-            : base(width, height, GraphicsMode.Default, "Board CG Game", GameWindowFlags.Default, DisplayDevice.Default, 2, 1, GraphicsContextFlags.Debug)
+            : base(width, height, GraphicsMode.Default, "Board CG Game", GameWindowFlags.Fullscreen, DisplayDevice.Default, 2, 1, GraphicsContextFlags.Debug)
         {
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            view = new View(Vector2.Zero);
-            view.Camera = new OpenGL.Camera();
+            _view = new View(Vector3.Zero);
             Input.Initialize(this);
         }
+    
+        private void BoardGame_KeyDown(object sender, KeyboardKeyEventArgs e)
+        {
+            // Exit
+            if (e.Key == OpenTK.Input.Key.F4 && e.Key.HasFlag(OpenTK.Input.Key.AltLeft))
+            {
+                Environment.Exit(0);
+            }
+        }
 
+        private void BoardGame_MouseMove(object sender, OpenTK.Input.MouseMoveEventArgs e)
+        {
+            if (_boardRotate)
+            {
+                _camera.XRotate += e.XDelta;
+                _camera.YRotate += e.YDelta;
+            }
+        }
+
+        private void BoardGame_MouseWheel(object sender, OpenTK.Input.MouseWheelEventArgs e)
+        {
+            if (e.Delta < 0)
+            {
+                _view.ZoomOut();
+            }
+            else
+            {
+                _view.ZoomIn();
+            }
+        }
 
         protected override void OnLoad(EventArgs e)
         {
@@ -62,111 +89,53 @@ namespace BoardCGame
             GL.ShadeModel(ShadingModel.Smooth);
             GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
 
+            LoadTextures();
+
+            _camera = new Camera();
+            _audio = new Audio();
             _dice = new Dice();
-            RandomizeCube();
+            _board = new Board("Content/BoardMap.tmx");
+            InitializePlayers();
 
-            _tileSet = TextureLoader.LoadTexture("ICONS_COMPLETE_1024x9.png");
-            _board = new OpenGL.Board("Content/MapaJogo.tmx");
-            _teste = TextureLoader.LoadTexture("lowPolyTree.png");
 
-            _player = new BoardCGame.Player(new Vector2(
-                (_board.PlayerStartPos.X) * Constants.GRIDSIZE,
-                (_board.PlayerStartPos.Y) * Constants.GRIDSIZE));
-
-            //MouseMove += BoardGame_MouseMove;
+            MouseMove += BoardGame_MouseMove;
             MouseWheel += BoardGame_MouseWheel;
+            KeyDown += BoardGame_KeyDown;
 
-            //Initialize();
-
-            _player.Position = new Vector2(_board.PlayerStartPos.X / Constants.TILESETSIZE,
-                                           _board.PlayerStartPos.Y / Constants.TILESETSIZE);
-
-            
+            _currentPlayer = EnumPlayer.Player1;
+            StartGamePosition();
 
             _watch = System.Diagnostics.Stopwatch.StartNew();
-
-
-
-            view.ResetPosition();
+            _audio.PlayIntro();
+            RandomizeCube();
         }
-
-        private void Initialize()
-        {
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-            Matrix4 lookAt = Matrix4.LookAt(0, 0, 0, 0, 0, 0, 0, 1, 0);
-            Matrix4 perspective = OpenTK.Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, this.Width / (float)this.Height, 1, 100f);
-            GL.LoadMatrix(ref perspective);
-            GL.LoadMatrix(ref lookAt);
-            GL.Enable(EnableCap.DepthTest);
-            GL.MatrixMode(MatrixMode.Modelview);
-        }
-
-        private void BoardGame_MouseWheel(object sender, OpenTK.Input.MouseWheelEventArgs e)
-        {
-            if (e.Delta < 0)
-            {
-                view.ZoomOut();
-            }
-            else
-            {
-                view.ZoomIn();
-            }
-        }
-
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            _watch.Stop();
-            float deltaElapsedTime = (float)_watch.ElapsedTicks/System.Diagnostics.Stopwatch.Frequency;
-            _watch.Restart();
-            _angle += deltaElapsedTime * 4;
 
-            GL.Viewport(0, 0, Width, Height);
             GL.ClearColor(Color.White);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.Enable(EnableCap.DepthTest);
-           
-            // DICE
-            GL.LoadIdentity();
+            DrawBackground();
+            
+            GL.Viewport(0, 0, Width, Height);
+       
+            LoadPerspective();
+            DrawDice();
+
+            PrepareDrawing();
+
+            CameraRotate();
+        
             GL.PushMatrix();
-
-            Matrix4 calculatedMatrix = Matrix4.Identity;
-            if (rotate)
-            {
-                calculatedMatrix = Matrix4.Mult(calculatedMatrix, Matrix4.CreateRotationX(_angle / 2));
-                calculatedMatrix = Matrix4.Mult(calculatedMatrix, Matrix4.CreateRotationY(_angle));
-            }
-
-            calculatedMatrix = Matrix4.Mult(calculatedMatrix, Matrix4.CreateTranslation(new Vector3(-1, 0, -5)));
-            calculatedMatrix = Matrix4.Mult(calculatedMatrix, Matrix4.CreateScale(.1f, .1f, .5f));
-            GL.MultMatrix(ref calculatedMatrix);
-
-            if (rotate)
-            {
-                _dice.Roll();
-            }
-            else
-            {
-                _dice.Stop(currentDiceFaceId);
-            }
-
+            DrawBoard();
+            _player1.Draw();
+            _player2.Draw();
             GL.PopMatrix();
 
+            DrawIcons();
 
-            GL.LoadIdentity();
-            GL.PushMatrix();
-            Matrix4 calculatedMatrix2 = Matrix4.Identity; 
-            calculatedMatrix2 = Matrix4.Mult(calculatedMatrix2, Matrix4.CreateTranslation(new Vector3(-20, -30, -80)));
-            GL.MultMatrix(ref calculatedMatrix2);
-
-
-            Draw();
-            _player.Draw();
-
-            GL.PopMatrix();
-
+            
             this.SwapBuffers();
         }
 
@@ -175,81 +144,329 @@ namespace BoardCGame
             base.OnResize(e);
             GL.Viewport(0, 0, Width, Height);
             float aspect = (float)Width / (float)Height;
-            Matrix4 perspective = OpenTK.Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect, 0.1f, 1000f); // Ultimos parametros ->  quão perto e quão longe, respectivamente, os objetos deixara de ser renderizado
+            Matrix4 perspective = OpenTK.Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect, 0.1f, 100f); // Ultimos parametros ->  quão perto e quão longe, respectivamente, os objetos deixara de ser renderizado
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref perspective);
             GL.MatrixMode(MatrixMode.Modelview);
         }
 
-        private void RandomizeCube()
-        {
-            currentDiceFaceId = _dice.PickRandomSideTexture(new List<Texture>(_dice._textures));
-            _dice._stoppedSides = _dice._textures.Where(t => t.Id != currentDiceFaceId).ToList();
-        }
-
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            base.OnUpdateFrame(e);
-            _player.Update();
-
-            //view.SetPosition(_player.Position, TweenType.QuarticOut, 60);
-
-            //v.ViewProjectionMatrix = cam.GetViewMatrix() * Matrix4.CreatePerspectiveFieldOfView(1.3f, ClientSize.Width / (float)ClientSize.Height, 1.0f, 40.0f);
+            base.OnUpdateFrame(e);        
 
             if (Input.MousePress(OpenTK.Input.MouseButton.Left))
             {
-                rotate = !rotate;
-                if (!rotate) // Pare!
-                {
-                    RandomizeCube();
-                }
-                //Vector2 pos = new Vector2(Mouse.X, Mouse.Y) - new Vector2(this.Width, this.Height)/2f;
-                //pos = view.ToWorld(pos);
-                //view.SetPosition(pos, TweenType.QuarticOut, 15);
+                _boardRotate = true;
             }
 
-            //if (Input.MousePress(OpenTK.Input.MouseButton.Right))
-            //{
-            //    rotate = false;
-            //    //Vector2 pos = new Vector2(Mouse.X, Mouse.Y) - new Vector2(this.Width, this.Height)/2f;
-            //    //pos = view.ToWorld(pos);
-            //    //view.SetPosition(pos, TweenType.QuarticOut, 15);
-            //}
+            if (Input.MouseRelease(MouseButton.Left))
+            {
+                _boardRotate = false;
+            }
+
+            if (Input.MousePress(OpenTK.Input.MouseButton.Right))
+            {
+                _diceRotate = !_diceRotate;
+                if (!_diceRotate) // Pare!
+                {
+                    _audio.PlayStopDice();
+                    int result = RandomizeCube();
+                    Play(result);
+                }
+                else
+                {
+                    _audio.PlayRollDice();
+                }
+            }
 
             if (Input.KeyDown(OpenTK.Input.Key.Right))
             {
-                view.SetPosition(view.PositionGoto + new Vector2(-5, 0), TweenType.QuarticOut, 60);
-                //_player.Position = _board.Paths.ElementAt(cont) != null ? new Vector2(_board.Paths.ElementAt(cont).X,
-                //                                                                 _board.Paths.ElementAt(cont).Y)
-                //                                                                 : _board.TestePos;
-                //cont++;
-                //_player.Update();
+                _view.SetPosition(_view.PositionGoto + new Vector3(10, 0, 0), EnumAnimationType.QuarticOut, 30);
             }
             if (Input.KeyDown(OpenTK.Input.Key.Left))
             {
-                view.SetPosition(view.PositionGoto + new Vector2(5, 0), TweenType.QuarticOut, 60);
+                _view.SetPosition(_view.PositionGoto + new Vector3(-10, 0, 0), EnumAnimationType.QuarticOut, 30);
             }
 
             if (Input.KeyDown(OpenTK.Input.Key.Down))
             {
-                view.SetPosition(view.PositionGoto + new Vector2(0, 5), TweenType.QuarticOut, 60);
+                _view.SetPosition(_view.PositionGoto + new Vector3(0, 10, 0), EnumAnimationType.QuarticOut, 30);
             }
 
             if (Input.KeyDown(OpenTK.Input.Key.Up))
             {
-                view.SetPosition(view.PositionGoto + new Vector2(0, -5), TweenType.QuarticOut, 60);
+                _view.SetPosition(_view.PositionGoto + new Vector3(0, -10, 0), EnumAnimationType.QuarticOut, 30);
             }
 
-            view.Update();
+            if (Input.KeyDown(OpenTK.Input.Key.G)) // Reset Camera
+            {
+                _camera.Reset();
+                _view.ResetPosition();
+            }
+      
             Input.Update();
-            //view.Camera.AddRotation(rotx, roty);
         }
 
-        private void Draw()
+        private void LoadTextures()
         {
-            Matrix4 calculatedMatrix = view.GetTransformMatrix();
+            _tileSet = TextureLoader.LoadTexture("ICONS_COMPLETE_1024x9.png");
+            _backgroundTexture = TextureLoader.LoadTexture("backgroundgame.jpg");
+        }
+
+        private void CalculateDiceRotation()
+        {
+            _watch.Stop();
+            float deltaElapsedTime = (float)_watch.ElapsedTicks / System.Diagnostics.Stopwatch.Frequency;
+            _watch.Restart();
+            _angle += deltaElapsedTime * 4;
+        }
+
+        private void StartGamePosition()
+        {
+            _view.ResetPosition();
+            LoadPerspective();
+        }
+
+        private void LoadPerspective()
+        {
+            GL.LoadIdentity();
+            GL.PushMatrix();
+            Matrix4 perspective = OpenTK.Matrix4.CreatePerspectiveFieldOfView(1.04f, 4 / 3f, 1, 10000f);
+            Matrix4 lookAtMatrix = _camera.GetLookAtMatrix(); 
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            GL.LoadMatrix(ref perspective);
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+            GL.LoadMatrix(ref lookAtMatrix);
+        }
+      
+        private void CameraRotate()
+        {
+            GL.Rotate(_camera.XRotate, 0, 1, 0);
+            GL.Rotate(_camera.YRotate, 1, 0, 0);
+        }
+
+        private void PrepareDrawing()
+        {
+            GL.LoadIdentity();
+            GL.PushMatrix();
+            Matrix4 calculatedMatrix2 = Matrix4.Identity;
+            calculatedMatrix2 = Matrix4.Mult(calculatedMatrix2, Matrix4.CreateTranslation(new Vector3(0, 0, -5f)));
+            calculatedMatrix2 = Matrix4.Mult(calculatedMatrix2, Matrix4.CreateScale(0.1f, -0.1f, .5f));
+            GL.MultMatrix(ref calculatedMatrix2);
+        }
+
+        private void InitializePlayers()
+        {
+            _player1 = new Player(new Vector2(_board.PlayerStartPos.X, _board.PlayerStartPos.Y),
+                      new Vector2(7, 3),
+                      "redplayericon.png",
+                      EnumPlayer.Player1);
+            _player2 = new Player(new Vector2(_board.PlayerStartPos.X, _board.PlayerStartPos.Y),
+                                  new Vector2(18, 3),
+                                  "blueplayericon.png",
+                                  EnumPlayer.Player2);
+        }
+
+        private int RandomizeCube()
+        {
+            DiceTexture chosenSideTexture;
+            if (_currentPlayer == EnumPlayer.Player1)
+            {
+                chosenSideTexture = _dice.PickRandomSideTexture(new List<DiceTexture>(_dice.GreenTextures));
+                _dice.StoppedSides = _dice.GreenTextures.Where(t => t.FaceNumber != chosenSideTexture.FaceNumber).ToList();
+            }
+            else
+            {
+                chosenSideTexture = _dice.PickRandomSideTexture(new List<DiceTexture>(_dice.RedTextures));
+                _dice.StoppedSides = _dice.RedTextures.Where(t => t.FaceNumber != chosenSideTexture.FaceNumber).ToList();
+            }
+
+            _currentDiceFaceId = chosenSideTexture.Id;
+            return chosenSideTexture.FaceNumber;
+        }
+
+        private void SwitchPlayer()
+        {
+            if (_currentPlayer == EnumPlayer.Player1)
+            {
+                _currentPlayer = EnumPlayer.Player2;
+            }
+            else
+            {
+                _currentPlayer = EnumPlayer.Player1;
+            }
+        }
+
+        private void CheckGameRules(Player currentPlayer)
+        {
+            if (currentPlayer.Won)
+            {
+                EndGame(currentPlayer);
+                return;
+            }
+
+            Block ruleBlock = _board.GetCorrespondingRuleBlock(currentPlayer.CurrentBlock);
+            if (ruleBlock != null)
+            {
+                EnumBlockType currentBlockType = ruleBlock.Type;
+                switch (currentBlockType)
+                {
+                    case EnumBlockType.Dice:
+                        // Nada a fazer, jogue de novo!
+                        break;
+                    case EnumBlockType.GreenSkull:
+                        currentPlayer.Penalized = true;
+                        SwitchPlayer();
+                        break;
+                    case EnumBlockType.SpeedBoots:
+                        currentPlayer.DoubleDice = true;
+                        SwitchPlayer();
+                        break;
+                    case EnumBlockType.Hole:
+                        currentPlayer.NegativeDice = true;
+                        SwitchPlayer();
+                        break;
+                    case EnumBlockType.BadluckRedSpot:
+                        currentPlayer.Position = new Vector2(_board.PlayerStartPos.X, _board.PlayerStartPos.Y);
+                        SwitchPlayer();
+                        break;
+                    case EnumBlockType.Dynamite:
+                        currentPlayer.DoubleNegativeDice = true;
+                        SwitchPlayer();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                SwitchPlayer();
+            }
+
+        }
+
+        private void Play(int diceResult)
+        {
+            if (_currentPlayer == EnumPlayer.Player1)
+            {
+                if (!_player1.Penalized)
+                {
+                    _player1.Update(_board, diceResult);
+                    CheckGameRules(_player1);
+                }
+                else
+                {
+                    _player1.Penalized = false;
+                    SwitchPlayer();
+                }
+            }
+            else
+            {
+                if (!_player2.Penalized)
+                {
+                    _player2.Update(_board, diceResult);
+                    CheckGameRules(_player2);
+                }
+                else
+                {
+                    _player2.Penalized = false;
+                    SwitchPlayer();
+                }
+            }
+        }
+
+        private void DrawIcons()
+        {
+            GL.LoadIdentity();
+            GL.PushMatrix();
+            GL.Translate(-2.5, 2, -5f);
+            GL.Scale(.5f, .5f, 1f);
+            GL.Enable(EnableCap.Texture2D);
+
+            if (_currentPlayer == EnumPlayer.Player1)
+            {
+                GL.BindTexture(TextureTarget.Texture2D, _player1.PlayerIconTexture.Id);
+            }
+            else
+            {
+                GL.BindTexture(TextureTarget.Texture2D, _player2.PlayerIconTexture.Id);
+            }
+
+            GL.Begin(PrimitiveType.Quads);
+            for (int i = 0; i < 4; i++)
+            {
+                GL.TexCoord2(Constants.TEXTCOORDS.ElementAt(i));
+                GL.Vertex2(Constants.TEXTCOORDS.ElementAt(i));
+            }
+
+            GL.End();
+            GL.PopMatrix();
+        }
+
+        private void DrawDice()
+        {
+            GL.LoadIdentity();
+            GL.PushMatrix();
+
+            CalculateDiceRotation();
+
+            Matrix4 calculatedMatrix = Matrix4.Identity;
+            if (_diceRotate)
+            {
+                calculatedMatrix = Matrix4.Mult(calculatedMatrix, Matrix4.CreateRotationX(_angle / 2));
+                calculatedMatrix = Matrix4.Mult(calculatedMatrix, Matrix4.CreateRotationY(_angle));
+            }
+
+            calculatedMatrix = Matrix4.Mult(calculatedMatrix, Matrix4.CreateTranslation(new Vector3(0, 0, -5)));
+            calculatedMatrix = Matrix4.Mult(calculatedMatrix, Matrix4.CreateScale(.1f, .1f, .5f));
             GL.MultMatrix(ref calculatedMatrix);
-                  
+
+            if (_diceRotate)
+            {
+
+                _dice.Roll(_currentPlayer);
+            }
+            else
+            {
+                _dice.Stop(_currentDiceFaceId);
+
+
+            }
+
+            GL.PopMatrix();
+        }
+
+        private void DrawBackground()
+        {
+            GL.Disable(EnableCap.DepthTest);
+            GL.PushMatrix();
+            GL.LoadIdentity();
+
+            GL.Enable(EnableCap.Texture2D);
+            GL.BindTexture(TextureTarget.Texture2D, _backgroundTexture.Id);
+
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            GL.Ortho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+
+            GL.Begin(PrimitiveType.Quads);
+            GL.TexCoord2(0.0f, 1.0f); GL.Vertex3(-1.0f, -1.0f, -0.0001);
+            GL.TexCoord2(1.0f, 1.0f); GL.Vertex3(1.0f, -1.0f, -0.0001);
+            GL.TexCoord2(1.0f, 0.0f); GL.Vertex3(1.0f, 1.0f, -0.0001);
+            GL.TexCoord2(0.0f, 0.0f); GL.Vertex3(-1.0f, 1.0f, -0.0001);
+            GL.End();
+            GL.PushMatrix();
+            GL.Enable(EnableCap.DepthTest);
+        }
+
+
+        private void DrawBoard()
+        {
+            _view.GetTransformMatrix();
             for (int x = 0; x < _board.Width; x++)
             {
                 for (int y = 0; y < _board.Height; y++)
@@ -258,21 +475,49 @@ namespace BoardCGame
 
                     switch (_board[x, y].Type)
                     {
-                        case BlockType.TerrainBoard:
+                        case EnumBlockType.TerrainBoard:
                             source = new RectangleF(1 * Constants.TILESETSIZE, 47 * Constants.TILESETSIZE,
                                    Constants.TILESETSIZE, Constants.TILESETSIZE);
                             break;
-                        case BlockType.Path:
+                        case EnumBlockType.Path:
                             source = new RectangleF(2 * Constants.TILESETSIZE, 30 * Constants.TILESETSIZE,
                                    Constants.TILESETSIZE, Constants.TILESETSIZE);
                             break;
-                        case BlockType.StartPoint:
+                        case EnumBlockType.StartPoint:
                             source = new RectangleF(4 * Constants.TILESETSIZE, 38 * Constants.TILESETSIZE,
                                   Constants.TILESETSIZE, Constants.TILESETSIZE);
                             break;
-                        case BlockType.EndPoint:
+                        case EnumBlockType.EndPoint:
                             source = new RectangleF(5 * Constants.TILESETSIZE, 5 * Constants.TILESETSIZE,
                                  Constants.TILESETSIZE, Constants.TILESETSIZE);
+                            break;
+                        case EnumBlockType.Dice:
+                            source = new RectangleF(47 * Constants.TILESETSIZE, 47 * Constants.TILESETSIZE,
+                                  Constants.TILESETSIZE, Constants.TILESETSIZE);
+                            break;
+                        case EnumBlockType.Twister:
+                            source = new RectangleF(2 * Constants.TILESETSIZE, 47 * Constants.TILESETSIZE,
+                                  Constants.TILESETSIZE, Constants.TILESETSIZE);
+                            break;
+                        case EnumBlockType.SpeedBoots:
+                            source = new RectangleF(0 * Constants.TILESETSIZE, 40 * Constants.TILESETSIZE,
+                                  Constants.TILESETSIZE, Constants.TILESETSIZE);
+                            break;
+                        case EnumBlockType.GreenSkull:
+                            source = new RectangleF(9 * Constants.TILESETSIZE, 38 * Constants.TILESETSIZE,
+                                  Constants.TILESETSIZE, Constants.TILESETSIZE);
+                            break;
+                        case EnumBlockType.Hole:
+                            source = new RectangleF(21 * Constants.TILESETSIZE, 46 * Constants.TILESETSIZE,
+                                  Constants.TILESETSIZE, Constants.TILESETSIZE);
+                            break;
+                        case EnumBlockType.BadluckRedSpot:
+                            source = new RectangleF(43 * Constants.TILESETSIZE, 43 * Constants.TILESETSIZE,
+                                  Constants.TILESETSIZE, Constants.TILESETSIZE);
+                            break;
+                        case EnumBlockType.Dynamite:
+                            source = new RectangleF(33 * Constants.TILESETSIZE, 47 * Constants.TILESETSIZE,
+                                  Constants.TILESETSIZE, Constants.TILESETSIZE);
                             break;
                         default:
                             break;
@@ -286,20 +531,21 @@ namespace BoardCGame
                         source);
                 }
             }
+        }
 
-
-            //RectangleF playerSource = new RectangleF(0, 0, 0, 0);
-
-            //// COORDS IMAGEM CORTADA
-            //playerSource = new RectangleF(1 * Constants.TILESETSIZE, 3 * Constants.TILESETSIZE,
-            //                      Constants.TILESETSIZE, Constants.TILESETSIZE);
-
-
-            //OpenGLDrawer.Draw(_tileSet, new Vector2(3 * Constants.GRIDSIZE, 35 * Constants.GRIDSIZE),
-            //           new Vector2((float)Constants.GRIDSIZE / Constants.TILESETSIZE),
-            //           Color.Transparent, Vector2.Zero, playerSource);
-
-
+        private void EndGame(Player currentPlayer)
+        {
+            string playerWhoWon = currentPlayer.Name == EnumPlayer.Player1 ? "Vermelho" : "Azul";
+            var result = Window.ShowDialog("Jogador " + playerWhoWon + " venceu!", "Deseja jogar novamente?");
+            if (result)
+            {
+                _player1.ResetGame(_board.PlayerStartPos);
+                _player2.ResetGame(_board.PlayerStartPos);
+            }
+            else
+            {
+                Environment.Exit(0);
+            }
         }
     }
 }

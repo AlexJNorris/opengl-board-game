@@ -4,58 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace BoardCGame.OpenGL
 {
     public class Camera
     {
-        public Vector3 Position = Vector3.Zero;
-        public Vector3 Orientation = new Vector3((float)Math.PI, 0f, 0f);
-        public float MoveSpeed = 0.2f;
-        public float MouseSensitivity = 0.01f;
+        private Vector3 _orientation = new Vector3((float)Math.PI, 0f, 0f);
 
-        public Matrix4 GetViewMatrix()
+        public int XRotate { get; set; }
+        public int YRotate { get; set; }
+
+        public void Reset()
         {
-            Vector3 lookat = new Vector3();
-
-            lookat.X = (float)(Math.Sin((float)Orientation.X) * Math.Cos((float)Orientation.Y));
-            lookat.Y = (float)Math.Sin((float)Orientation.Y);
-            lookat.Z = (float)(Math.Cos((float)Orientation.X) * Math.Cos((float)Orientation.Y));
-
-            return Matrix4.LookAt(Position, Position + lookat, Vector3.UnitY);
+            this.XRotate = 0;
+            this.YRotate = 0;
         }
 
-        public void Move(float x, float y, float z)
+        public Matrix4 GetLookAtMatrix()
         {
-            Vector3 offset = new Vector3();
-
-            Vector3 forward = new Vector3((float)Math.Sin((float)Orientation.X), 0, (float)Math.Cos((float)Orientation.X));
-            Vector3 right = new Vector3(-forward.Z, 0, forward.X);
-
-            offset += x * right;
-            offset += y * forward;
-            offset.Y += z;
-
-            offset.NormalizeFast();
-            offset = Vector3.Multiply(offset, MoveSpeed);
-
-            Position += offset;
+            var lookAt = new Vector3();
+            lookAt.X = (float)(Math.Sin((float)_orientation.X) * Math.Cos((float)_orientation.Y));
+            lookAt.Y = (float)Math.Sin((float)_orientation.Y);
+            lookAt.Z = (float)(Math.Cos((float)_orientation.X) * Math.Cos((float)_orientation.Y));
+            return Matrix4.LookAt(Vector3.Zero, Vector3.Zero + lookAt, Vector3.UnitY);
         }
-
-        public void AddRotation(float x, float y)
-        {
-            x = x * MouseSensitivity;
-            y = y * MouseSensitivity;
-
-            Orientation.X = (Orientation.X + x) % ((float)Math.PI * 2.0f);
-            Orientation.Y = Math.Max(Math.Min(Orientation.Y + y, (float)Math.PI / 2.0f - 0.1f), (float)-Math.PI / 2.0f + 0.1f);
-        }
-
-
-
-
-
-
     }
-
 }

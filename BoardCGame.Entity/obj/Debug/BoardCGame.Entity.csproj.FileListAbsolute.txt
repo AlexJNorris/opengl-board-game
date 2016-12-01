@@ -1,9 +1,9 @@
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Entity.dll
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Entity.pdb
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\OpenTK.dll
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\OpenTK.xml
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.csprojResolveAssemblyReference.cache
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.dll
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.pdb
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Entity.dll
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Entity.pdb
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Util.dll
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\OpenTK.dll
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\BoardCGame.Util.pdb
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\bin\Debug\OpenTK.xml
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.csprojResolveAssemblyReference.cache
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.dll
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Entity\obj\Debug\BoardCGame.Entity.pdb

@@ -8,16 +8,31 @@ using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using BoardCGame.Entity;
+using BoardCGame.Entity.Enumerations;
 using BoardCGame.OpenGL;
 
 namespace BoardCGame
 {
     public class Dice
     {
-        public IList<DiceSide> _sides;
+        private IList<DiceSide> _sides;
         private IList<Vector2> _textCoords;
-        public IList<Texture> _stoppedSides;
-        public IList<Texture> _textures;
+        private IList<DiceTexture> _redTextures;
+        private IList<DiceTexture> _greenTextures;
+
+        public IList<DiceTexture> StoppedSides { get; set; }
+
+        public IList<DiceTexture> RedTextures
+        {
+            get { return _redTextures; }
+        }
+
+        public IList<DiceTexture> GreenTextures
+        {
+            get { return _greenTextures; }
+        }
+
+        public IList<DiceTexture> Sides { get; set; }
 
         public Dice()
         {
@@ -27,16 +42,25 @@ namespace BoardCGame
 
         private void InitializeTextures()
         {
-            _textures = new List<Texture>()
+            _redTextures = new List<DiceTexture>()
             {
-                TextureLoader.LoadTexture("1.2.png"),
-                TextureLoader.LoadTexture("2.2.png"),
-                TextureLoader.LoadTexture("3.2.png"),
-                TextureLoader.LoadTexture("4.2.png"),
-                TextureLoader.LoadTexture("5.2.png"),
-                TextureLoader.LoadTexture("6.2.png")
+                TextureLoader.LoadDiceTexture("1.2.png", EnumDiceTextureType.RedDice,1),
+                TextureLoader.LoadDiceTexture("2.2.png", EnumDiceTextureType.RedDice,2),
+                TextureLoader.LoadDiceTexture("3.2.png", EnumDiceTextureType.RedDice,3),
+                TextureLoader.LoadDiceTexture("4.2.png", EnumDiceTextureType.RedDice,4),
+                TextureLoader.LoadDiceTexture("5.2.png", EnumDiceTextureType.RedDice,5),
+                TextureLoader.LoadDiceTexture("6.2.png", EnumDiceTextureType.RedDice,6)
             };
 
+            _greenTextures = new List<DiceTexture>()
+            {
+                TextureLoader.LoadDiceTexture("1.png", EnumDiceTextureType.GreenDice,1),
+                TextureLoader.LoadDiceTexture("2.png", EnumDiceTextureType.GreenDice,2),
+                TextureLoader.LoadDiceTexture("3.png", EnumDiceTextureType.GreenDice,3),
+                TextureLoader.LoadDiceTexture("4.png", EnumDiceTextureType.GreenDice,4),
+                TextureLoader.LoadDiceTexture("5.png", EnumDiceTextureType.GreenDice,5),
+                TextureLoader.LoadDiceTexture("6.png", EnumDiceTextureType.GreenDice,6)
+            };
 
             _textCoords = new List<Vector2>()
         {
@@ -96,35 +120,29 @@ namespace BoardCGame
             };
         }
 
-        private static IList<Vector3> faces = new List<Vector3>() {
-                new Vector3(1, 1, -1), new Vector3(-1, 1, -1), new Vector3(-1, 1, 1), new Vector3(1, 1, 1),
-                new Vector3(1, -1, 1), new Vector3(-1, -1, 1), new Vector3(-1, -1, -1), new Vector3(1, -1, -1),
-                new Vector3(1, 1, 1), new Vector3(-1, 1, 1), new Vector3(-1, -1, 1), new Vector3(1, -1, 1),
-                new Vector3(1, -1, -1), new Vector3(-1, -1, -1), new Vector3(-1, 1, -1), new Vector3(1, 1, -1),
-                new Vector3(-1, 1, 1), new Vector3(-1, 1, -1), new Vector3(-1, -1, -1), new Vector3(-1, -1, 1),
-                new Vector3(1, 1, -1), new Vector3(1, 1, 1), new Vector3(1, -1, 1), new Vector3(1, -1, -1) };
-
-
-        public int PickRandomSideTexture(IList<Texture> textures)
+        
+        public DiceTexture PickRandomSideTexture(IList<DiceTexture> textures)
         {
             Random rnd = new Random();
-            Texture chosenTexture;
+            DiceTexture chosenTexture;
             if (textures.Count > 0)
             {
-                chosenTexture = textures.OrderBy(t => t.Id).Skip(rnd.Next(0, textures.Count - 1)).Take(1).First();
+                chosenTexture = textures.OrderBy(t => t.FaceNumber).Skip(rnd.Next(0, textures.Count - 1)).Take(1).First();
             }
             else
             {
                 chosenTexture = textures.First();
             }
-            int chosenId = chosenTexture.Id;
+
+            DiceTexture clone = (DiceTexture)chosenTexture.Clone();
             textures.Remove(chosenTexture);
-            return chosenId;
+            return clone;
         }
 
-        public void Roll()
+        public void Roll(EnumPlayer player)
         {
-            IList<Texture> textureBackup = new List<Texture>(_textures);
+            IList<DiceTexture> textureBackup = new List<DiceTexture>(player == EnumPlayer.Player1 ? _redTextures
+                                                                                          : _greenTextures);        
             foreach (var side in _sides.Select((value, i) => new { i, value }))
             {
                 int textId = textureBackup.ElementAt(side.i).Id;
@@ -140,7 +158,7 @@ namespace BoardCGame
             }
         }
 
-        private int GetNextTexture(IList<Texture> textures)
+        private int GetNextTexture(IList<DiceTexture> textures)
         {
             var next = textures.First();
             int id = next.Id;
@@ -151,7 +169,7 @@ namespace BoardCGame
         public void Stop(int textId)
         {
             IList<DiceSide> diceBackup = new List<DiceSide>(_sides);
-            IList<Texture> textureBackup = new List<Texture>(_stoppedSides);
+            IList<DiceTexture> textureBackup = new List<DiceTexture>(this.StoppedSides);
 
             var side1 = _sides.First();
             GL.BindTexture(TextureTarget.Texture2D, textId);

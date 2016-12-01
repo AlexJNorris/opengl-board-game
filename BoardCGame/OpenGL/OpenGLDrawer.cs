@@ -41,7 +41,7 @@ namespace BoardCGame.OpenGL
                 }
 
                 vertices[i].X *= sourceRec?.Width ?? texture.Width;
-                vertices[i].Y *= (sourceRec == null) ? texture.Height : sourceRec.Value.Height;
+                vertices[i].Y *= sourceRec?.Height ?? texture.Height;
                 vertices[i] -= origin;
                 vertices[i] *= scale;
                 vertices[i] += position;
@@ -57,8 +57,7 @@ namespace BoardCGame.OpenGL
             GL.Viewport(0, 0, screenWidth, screenHeight);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            GL.Ortho(-screenWidth / 2f, screenWidth, screenHeight / 2f, -screenHeight / 2f, 0f, 1f);
-            GL.Scale(.8, .5, .8);
+            GL.Ortho(-screenWidth / 2f, screenWidth / 2f, screenHeight / 2f, -screenHeight / 2f, 0f, 1000f);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
         }

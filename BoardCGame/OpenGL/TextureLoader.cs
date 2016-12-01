@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using BoardCGame.Entity;
+using BoardCGame.Entity.Enumerations;
 
 namespace BoardCGame.OpenGL
 {
@@ -33,6 +34,12 @@ namespace BoardCGame.OpenGL
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             return new Texture(id, bmp.Width, bmp.Height);
+        }
+
+        public static DiceTexture LoadDiceTexture(string fileName, EnumDiceTextureType diceTextureType, int faceNumber)
+        {
+            Texture texture = LoadTexture(fileName);
+            return new DiceTexture(texture.Id, texture.Width, texture.Height, diceTextureType, faceNumber);
         }
     }
 }

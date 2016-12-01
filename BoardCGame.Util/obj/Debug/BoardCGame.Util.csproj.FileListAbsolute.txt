@@ -1,9 +1,7 @@
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\BoardCGame.Util.dll
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\BoardCGame.Util.pdb
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\obj\Debug\BoardCGame.Util.csprojResolveAssemblyReference.cache
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\obj\Debug\BoardCGame.Util.dll
-c:\users\davin\documents\visual studio 2015\Projects\BoardCGame\BoardCGame.Util\obj\Debug\BoardCGame.Util.pdb
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\BoardCGame.Util.dll
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\BoardCGame.Util.pdb
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\OpenTK.dll
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\OpenTK.xml
-C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\BoardCGame.Util.dll.CodeAnalysisLog.xml
-C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Util\bin\Debug\BoardCGame.Util.dll.lastcodeanalysissucceeded
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Util\obj\Debug\BoardCGame.Util.csprojResolveAssemblyReference.cache
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Util\obj\Debug\BoardCGame.Util.dll
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame.Util\obj\Debug\BoardCGame.Util.pdb

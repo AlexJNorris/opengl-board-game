@@ -19,17 +19,41 @@ namespace BoardCGame
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
-        public Vector2 Velocity { get; set; }
+        public Vector2 PositionToCut { get; set; }
 
         private Texture _playerSprite;
-        private bool _climbing, _facingRight, _onLadder, _grounded;
+        public int CurrentPathIndex { get; set; }
+
+        private Block _currentBlock;
+        
+
+        public Block CurrentBlock
+        {
+            get { return _currentBlock; }
+        }
+
+        private Texture _playerIconTexture;
+
+        public Texture PlayerIconTexture
+        {
+            get { return _playerIconTexture; }
+        }
+
+        public EnumPlayer Name { get; set; }
+
+        public bool Penalized { get; set; }
+        public bool DoubleDice { get; set; }
+        public bool NegativeDice { get; set; }
+        public bool DoubleNegativeDice { get; set; }
+        public bool Won { get; set; }
+        
 
         //Retangulo de colisão
         public RectangleF ColRec
         {
             get
             {
-                return new RectangleF(Position.X - Size.X/2f, Position.Y - Size.Y/2f, Size.X, Size.Y);
+                return new RectangleF(Position.X - Size.X / 2f, Position.Y - Size.Y / 2f, Size.X, Size.Y);
             }
         }
 
@@ -44,42 +68,99 @@ namespace BoardCGame
             }
         }
 
-        public Player(Vector2 startPos)
+        public Player(Vector2 startPos, Vector2 positionToCut, string fileNameIconTexture, EnumPlayer name)
         {
             Position = startPos;
-            Velocity = Vector2.Zero;
-            _facingRight = true;
-            Size = new Vector2(40, 32);
-            _playerSprite = TextureLoader.LoadTexture("player1walkingRight2.png");
+            PositionToCut = positionToCut;
+            Size = new Vector2(40, 40);
+            _playerSprite = TextureLoader.LoadTexture("Shockbolt_64x64_01.png");
+            _playerIconTexture = TextureLoader.LoadTexture(fileNameIconTexture);
+            Name = name;
         }
 
-        public void Update()
+        public void Update(Board board, int qtdBlocksToWalk)
         {
-            HandleInput();
+            // Nada a fazer
+            if (qtdBlocksToWalk == 0)
+            {
+                ResetFlags();
+                return;
+            }
 
-            //Velocity += new Vector2(0, 0.5f);
-            Position += Velocity;
-            ResolveCollision();
+            qtdBlocksToWalk = ApplyBoardRules(board, qtdBlocksToWalk);
+           
+            IList<Block> boardPaths = board.Paths;
+            this.CurrentPathIndex += qtdBlocksToWalk;
+
+
+            Block nextBlock = boardPaths.ElementAt(CurrentPathIndex - 1);
+            _currentBlock = nextBlock;
+            this.Position = new Vector2(nextBlock.X, nextBlock.Y);
+            ResetFlags();
         }
 
-        public void HandleInput()
-        {
-            
-        }
-
-        public void ResolveCollision()
-        {
-            
-        }
-
+        
         public void Draw()
         {
+            GL.Clear(ClearBufferMask.DepthBufferBit);
+
             OpenGLDrawer.Draw(_playerSprite,
-                new Vector2(Position.X*Constants.GRIDSIZE, -Position.Y*Constants.GRIDSIZE),
-                new Vector2(DrawRec.Width/_playerSprite.Width, DrawRec.Height/_playerSprite.Height),
+                new Vector2(this.Position.X * Constants.GRIDSIZE, (this.Position.Y) * Constants.GRIDSIZE),
+                new Vector2((float)Constants.GRIDSIZE / Constants.TILESETSIZE),
                 Color.Transparent,
-                Vector2.Zero,//new Vector2(_playerSprite.Width/4f, _playerSprite.Height/2f),
-                new RectangleF(0, 0,_playerSprite.Width, _playerSprite.Height));
+                Vector2.Zero,
+                new RectangleF(PositionToCut.X * Constants.TILESETSIZE, PositionToCut.Y * Constants.TILESETSIZE,
+                                  Constants.TILESETSIZE, Constants.TILESETSIZE));
         }
+
+        public void ResetGame(Point startPos)
+        {
+            ResetFlags();
+            this.Position = new Vector2(startPos.X,startPos.Y);
+        }
+
+        #region Private Methods
+        private void ResetFlags()
+        {
+            this.DoubleDice = false;
+            this.NegativeDice = false;
+            this.DoubleNegativeDice = false;
+            this.Won = false;
+            this.Penalized = false;
+        }
+
+        private int ApplyBoardRules(Board board, int qtdBlocksToWalk)
+        {
+            if (board.Paths.Count < (qtdBlocksToWalk - 1))
+            {
+                throw new Exception("Problema ao carregar Board!");
+            }            
+
+            if (this.DoubleDice)
+            {
+                qtdBlocksToWalk *= 2;
+            }
+            if (this.NegativeDice)
+            {
+                qtdBlocksToWalk *= -1;
+            }
+            if (this.DoubleNegativeDice)
+            {
+                qtdBlocksToWalk *= -1;
+                qtdBlocksToWalk *= 2;
+            }
+
+            // Fim de jogo
+            if (board.Paths.Count <= (this.CurrentPathIndex + qtdBlocksToWalk))
+            {
+                this.Won = true;
+            }
+
+
+            return qtdBlocksToWalk;
+        }
+
+
+        #endregion
     }
 }
