@@ -35,7 +35,7 @@ namespace BoardCGame
         bool _boardRotate;
         
         public BoardGame(int width, int height)
-            : base(width, height, GraphicsMode.Default, "Board CG Game", GameWindowFlags.Fullscreen, DisplayDevice.Default, 2, 1, GraphicsContextFlags.Debug)
+            : base(width, height, GraphicsMode.Default, "Board CG Game", GameWindowFlags.Default, DisplayDevice.Default, 2, 1, GraphicsContextFlags.Debug)
         {
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Blend);
@@ -274,13 +274,13 @@ namespace BoardCGame
             DiceTexture chosenSideTexture;
             if (_currentPlayer == EnumPlayer.Player1)
             {
-                chosenSideTexture = _dice.PickRandomSideTexture(new List<DiceTexture>(_dice.GreenTextures));
-                _dice.StoppedSides = _dice.GreenTextures.Where(t => t.FaceNumber != chosenSideTexture.FaceNumber).ToList();
+                chosenSideTexture = _dice.PickRandomSideTexture(new List<DiceTexture>(_dice.RedTextures));
+                _dice.StoppedSides = _dice.RedTextures.Where(t => t.FaceNumber != chosenSideTexture.FaceNumber).ToList();
             }
             else
             {
-                chosenSideTexture = _dice.PickRandomSideTexture(new List<DiceTexture>(_dice.RedTextures));
-                _dice.StoppedSides = _dice.RedTextures.Where(t => t.FaceNumber != chosenSideTexture.FaceNumber).ToList();
+                chosenSideTexture = _dice.PickRandomSideTexture(new List<DiceTexture>(_dice.BlueTextures));
+                _dice.StoppedSides = _dice.BlueTextures.Where(t => t.FaceNumber != chosenSideTexture.FaceNumber).ToList();
             }
 
             _currentDiceFaceId = chosenSideTexture.Id;

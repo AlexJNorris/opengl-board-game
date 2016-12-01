@@ -18,7 +18,7 @@ namespace BoardCGame
         private IList<DiceSide> _sides;
         private IList<Vector2> _textCoords;
         private IList<DiceTexture> _redTextures;
-        private IList<DiceTexture> _greenTextures;
+        private IList<DiceTexture> _blueTextures;
 
         public IList<DiceTexture> StoppedSides { get; set; }
 
@@ -27,9 +27,9 @@ namespace BoardCGame
             get { return _redTextures; }
         }
 
-        public IList<DiceTexture> GreenTextures
+        public IList<DiceTexture> BlueTextures
         {
-            get { return _greenTextures; }
+            get { return _blueTextures; }
         }
 
         public IList<DiceTexture> Sides { get; set; }
@@ -52,14 +52,14 @@ namespace BoardCGame
                 TextureLoader.LoadDiceTexture("6.2.png", EnumDiceTextureType.RedDice,6)
             };
 
-            _greenTextures = new List<DiceTexture>()
+            _blueTextures = new List<DiceTexture>()
             {
-                TextureLoader.LoadDiceTexture("1.png", EnumDiceTextureType.GreenDice,1),
-                TextureLoader.LoadDiceTexture("2.png", EnumDiceTextureType.GreenDice,2),
-                TextureLoader.LoadDiceTexture("3.png", EnumDiceTextureType.GreenDice,3),
-                TextureLoader.LoadDiceTexture("4.png", EnumDiceTextureType.GreenDice,4),
-                TextureLoader.LoadDiceTexture("5.png", EnumDiceTextureType.GreenDice,5),
-                TextureLoader.LoadDiceTexture("6.png", EnumDiceTextureType.GreenDice,6)
+                TextureLoader.LoadDiceTexture("1.3.png", EnumDiceTextureType.BlueDice,1),
+                TextureLoader.LoadDiceTexture("2.3.png", EnumDiceTextureType.BlueDice,2),
+                TextureLoader.LoadDiceTexture("3.3.png", EnumDiceTextureType.BlueDice,3),
+                TextureLoader.LoadDiceTexture("4.3.png", EnumDiceTextureType.BlueDice,4),
+                TextureLoader.LoadDiceTexture("5.3.png", EnumDiceTextureType.BlueDice,5),
+                TextureLoader.LoadDiceTexture("6.3.png", EnumDiceTextureType.BlueDice,6)
             };
 
             _textCoords = new List<Vector2>()
@@ -142,12 +142,12 @@ namespace BoardCGame
         public void Roll(EnumPlayer player)
         {
             IList<DiceTexture> textureBackup = new List<DiceTexture>(player == EnumPlayer.Player1 ? _redTextures
-                                                                                          : _greenTextures);        
+                                                                                          : _blueTextures);        
             foreach (var side in _sides.Select((value, i) => new { i, value }))
             {
                 int textId = textureBackup.ElementAt(side.i).Id;
                 GL.BindTexture(TextureTarget.Texture2D, textId);
-                GL.Begin(BeginMode.Quads);
+                GL.Begin(PrimitiveType.Quads);
                 for (int j = 0; j < 4; j++)
                 {
                     GL.TexCoord2(_textCoords.ElementAt(j));
@@ -173,7 +173,7 @@ namespace BoardCGame
 
             var side1 = _sides.First();
             GL.BindTexture(TextureTarget.Texture2D, textId);
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(PrimitiveType.Quads);
 
             for (int j = 0; j < 4; j++)
             {
@@ -187,7 +187,7 @@ namespace BoardCGame
             {
                 textId = GetNextTexture(textureBackup);
                 GL.BindTexture(TextureTarget.Texture2D, textId);
-                GL.Begin(BeginMode.Quads);
+                GL.Begin(PrimitiveType.Quads);
 
                 for (int j = 0; j < 4; j++)
                 {

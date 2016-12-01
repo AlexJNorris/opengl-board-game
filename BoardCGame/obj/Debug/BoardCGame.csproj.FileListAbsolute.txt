@@ -35,3 +35,9 @@ C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\D
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Sound\rolling.wav
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\obj\Debug\BoardCGame.csproj.BoardCGame.exe.config
 C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Sound\ambientsound.wav
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\4.3.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\1.3.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\2.3.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\3.3.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\5.3.PNG
+C:\Users\davin\Documents\Visual Studio 2015\Projects\BoardCGame\BoardCGame\bin\Debug\Content\6.3.PNG

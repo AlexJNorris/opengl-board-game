@@ -9,6 +9,6 @@ namespace BoardCGame.Entity.Enumerations
     public enum EnumDiceTextureType
     {
         RedDice,
-        GreenDice
+        BlueDice
     }
 }
